@@ -2,6 +2,18 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksObserver.ConsoleApp", "TasksObserver.ConsoleApp\TasksObserver.ConsoleApp.csproj", "{81CAA47C-7DFF-4036-8FD3-F7C712D03639}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksObserver.MailObserver", "TasksObserver.MailObserver\TasksObserver.MailObserver.csproj", "{81716F4A-0A23-40CD-BD6C-EE5C96B478EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksObserver.UseCases", "TasksObserver.UseCases\TasksObserver.UseCases.csproj", "{BDFFA6BB-A404-486A-84F9-7FF294A64A8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksObserver.Domain", "TasksObserver.Domain\TasksObserver.Domain.csproj", "{726E2506-F862-44E5-928E-F4D909EB7BF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksObserver.Abstractions", "TasksObserver.Abstractions\TasksObserver.Abstractions.csproj", "{70C65E68-1E2A-4224-B209-1167CD5F35E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksObserver.Infrastructure", "TasksObserver.Infrastructure\TasksObserver.Infrastructure.csproj", "{903330C8-51A3-4C9E-AC3B-8CC6BABB32FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksObserver.HandledMailsProvider", "TasksObserver.HandledMailsProvider\TasksObserver.HandledMailsProvider.csproj", "{6CAAF537-1D9B-41B6-BA23-589231A1F7A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +24,29 @@ Global
 		{81CAA47C-7DFF-4036-8FD3-F7C712D03639}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81CAA47C-7DFF-4036-8FD3-F7C712D03639}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81CAA47C-7DFF-4036-8FD3-F7C712D03639}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81716F4A-0A23-40CD-BD6C-EE5C96B478EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81716F4A-0A23-40CD-BD6C-EE5C96B478EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81716F4A-0A23-40CD-BD6C-EE5C96B478EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81716F4A-0A23-40CD-BD6C-EE5C96B478EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDFFA6BB-A404-486A-84F9-7FF294A64A8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDFFA6BB-A404-486A-84F9-7FF294A64A8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDFFA6BB-A404-486A-84F9-7FF294A64A8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDFFA6BB-A404-486A-84F9-7FF294A64A8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{726E2506-F862-44E5-928E-F4D909EB7BF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{726E2506-F862-44E5-928E-F4D909EB7BF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{726E2506-F862-44E5-928E-F4D909EB7BF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{726E2506-F862-44E5-928E-F4D909EB7BF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70C65E68-1E2A-4224-B209-1167CD5F35E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70C65E68-1E2A-4224-B209-1167CD5F35E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70C65E68-1E2A-4224-B209-1167CD5F35E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70C65E68-1E2A-4224-B209-1167CD5F35E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{903330C8-51A3-4C9E-AC3B-8CC6BABB32FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{903330C8-51A3-4C9E-AC3B-8CC6BABB32FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{903330C8-51A3-4C9E-AC3B-8CC6BABB32FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{903330C8-51A3-4C9E-AC3B-8CC6BABB32FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CAAF537-1D9B-41B6-BA23-589231A1F7A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CAAF537-1D9B-41B6-BA23-589231A1F7A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CAAF537-1D9B-41B6-BA23-589231A1F7A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CAAF537-1D9B-41B6-BA23-589231A1F7A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
