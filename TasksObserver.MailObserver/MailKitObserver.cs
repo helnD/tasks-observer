@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 using MailKit;
@@ -36,62 +35,65 @@ namespace TasksObserver.MailObserver
         {
             await _imapClient.ConnectAsync(_mailSettings.Domain, _mailSettings.Port, true, cancellationToken);
             await _imapClient.AuthenticateAsync(_mailSettings.Login, _mailSettings.Password, cancellationToken);
-            await _imapClient.Inbox.OpenAsync(FolderAccess.ReadOnly, cancellationToken);
 
-            var messagesToFetch = new List<UniqueId>();
+            var requestsFolder = await GetRequestsFolderAsync(cancellationToken);
+            var todayQuery = SearchQuery.DeliveredAfter(DateTime.Now.Date);
 
-            var emailAfterFilter = SearchQuery.DeliveredAfter(
-                DateTime.Now.AddMinutes(-3 * _appSettings.UpdateFrequencyInMinutes));
-            var recentMessages = await _imapClient.Inbox.SearchAsync(emailAfterFilter, cancellationToken);
+            var messages = await requestsFolder.SearchAsync(todayQuery, cancellationToken);
+            var notHandledMessages = await GetNotHandledMessagesAsync(messages, cancellationToken);
 
-            foreach (var messageId in recentMessages)
-            {
-                if (await _handledMailsProvider.IsHandledAsync(messageId.Id, cancellationToken))
-                {
-                    continue;
-                }
+            var messageInfo = await GetMessagesAsync(notHandledMessages, requestsFolder, cancellationToken);
 
-                messagesToFetch.Add(messageId);
-            }
-
-            var fetchedMessages = await _imapClient.Inbox
-                .FetchAsync(messagesToFetch, MessageSummaryItems.All, cancellationToken);
-            var onlyProcessableMessages = GetOnlyProcessableMessages(fetchedMessages)
-                .ToList();
-
-            var messageTexts = new List<string>();
-            foreach (var message in onlyProcessableMessages)
-            {
-                var newText = await GetMessageText(message.UniqueId, cancellationToken);
-                messageTexts.Add(newText);
-            }
-
-            await _imapClient.DisconnectAsync(true, cancellationToken);
-
-            var messagesWithTexts = onlyProcessableMessages.Zip(messageTexts);
+            var messagesWithTexts = notHandledMessages.Zip(messageInfo);
             var resultMails = messagesWithTexts.Select(message => new Mail
             {
-                Id = message.First.UniqueId.Id,
-                From = message.First.Envelope.From.OfType<MailboxAddress>().First().Address,
-                To = message.First.Envelope.To.OfType<MailboxAddress>().First().Address,
-                Subject = message.First.Envelope.Subject,
-                Message = message.Second
+                Id = message.First.Id,
+                From = GetAddressFromAddressList(message.Second.From),
+                To = GetAddressFromAddressList(message.Second.To),
+                Subject = message.Second.Subject,
+                Message = message.Second.HtmlBody
             }).ToList();
 
+            await _imapClient.DisconnectAsync(true, cancellationToken);
             await _handledMailsProvider.AddNewMailsAsync(resultMails, cancellationToken);
             return resultMails;
         }
 
-        private async Task<string> GetMessageText(UniqueId messageId, CancellationToken cancellationToken)
+        private async Task<IEnumerable<MimeMessage>> GetMessagesAsync(IEnumerable<UniqueId> messageIds, IMailFolder folder,
+            CancellationToken cancellationToken)
         {
-            var message = await _imapClient.Inbox.GetMessageAsync(messageId, cancellationToken);
-            return message.TextBody;
+            var messages = new List<MimeMessage>();
+            foreach (var messageId in messageIds)
+            {
+                var message = await folder.GetMessageAsync(messageId, cancellationToken);
+                messages.Add(message);
+            }
+
+            return messages;
         }
 
-        private IEnumerable<IMessageSummary> GetOnlyProcessableMessages(IEnumerable<IMessageSummary> messageSummaries)
+        private async Task<IMailFolder> GetRequestsFolderAsync(CancellationToken cancellationToken)
         {
-            return messageSummaries.Where(summary => GetAddressFromAddressList(summary.Envelope.To)
-                .Contains(_appSettings.ChangesRequestSuffix));
+            var requestsFolder = await _imapClient.GetFolderAsync(_appSettings.ChangeRequestsFolder,  cancellationToken);
+            await requestsFolder.OpenAsync(FolderAccess.ReadOnly, cancellationToken);
+            return requestsFolder;
+        }
+
+        private async Task<IEnumerable<UniqueId>> GetNotHandledMessagesAsync(IEnumerable<UniqueId> folderMessages,
+            CancellationToken cancellationToken)
+        {
+            var notHandledMessages = new List<UniqueId>();
+            foreach (var message in folderMessages)
+            {
+                if (await _handledMailsProvider.IsHandledAsync(message.Id, cancellationToken))
+                {
+                    continue;
+                }
+
+                notHandledMessages.Add(message);
+            }
+
+            return notHandledMessages;
         }
 
         private string GetAddressFromAddressList(InternetAddressList addressList) =>

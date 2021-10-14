@@ -4,6 +4,6 @@
     {
         public int UpdateFrequencyInMinutes { get; init; }
 
-        public string ChangesRequestSuffix { get; init; }
+        public string ChangeRequestsFolder { get; init; }
     }
 }
