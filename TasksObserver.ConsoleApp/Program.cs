@@ -1,11 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Hangfire;
+using Hangfire.MemoryStorage;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TasksObserver.Abstractions;
 using TasksObserver.Infrastructure;
 using TasksObserver.MailObserver;
+using TasksObserver.UseCases.Tasks.ObserveTasks;
 
 namespace TasksObserver.ConsoleApp
 {
@@ -30,16 +34,23 @@ namespace TasksObserver.ConsoleApp
             serviceCollection.Configure<AppSettings>(_configuration.GetSection("AppSettings"));
             serviceCollection.AddSingleton<IHandledMailsProvider, HandledMailsProvider.HandledMailsProvider>();
             serviceCollection.AddTransient<IMailObserver, MailKitObserver>();
+            serviceCollection.AddTransient<TasksObserverService>();
+
+            serviceCollection.AddMediatR(typeof(ObserveTasksCommand).Assembly);
+
+            serviceCollection.AddHangfire((serviceProvider, config) =>
+                config.UseMemoryStorage()
+                    .UseActivator(new HangfireActivator(serviceProvider)));
         }
 
         static async Task Startup()
         {
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
+            await using var serviceProvider = serviceCollection.BuildServiceProvider();
+            var tasksObserver = serviceProvider.GetService<TasksObserverService>();
 
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-
-            var mailService = serviceProvider.GetService<IMailObserver>();
+            await tasksObserver.StartObservation();
         }
     }
 }
